@@ -12,8 +12,8 @@ interface Route {
 
 const Layout = (props: React.PropsWithChildren) => {
   return (
-    <div className="flex w-full justify-center mt-48">
-      <div className="flex min-w-[70rem] border rounded-md">
+    <div className="h-screen">
+      <div className="flex min-w-[70rem] border rounded-md h-full">
         <Navbar />
         <Separator orientation="vertical" />
         <div className="p-3">{props.children}</div>
