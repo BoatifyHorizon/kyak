@@ -1,9 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
-import { LodkaItem, getLodkaItems } from "../connection/stock";
+import { LodkaItem, StockItemEntity, getLodkaItems, getOdziezItems, getWioslaItems } from "../../connection/stock";
 import Layout from "../layout";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
+import { useMemo } from "react";
+import style from "../../lib/scrollbar-style.module.css";
 
 interface StockCardProps {
   title: string;
@@ -22,9 +24,17 @@ export interface ImageProps {
 }
 
 const StockPage = () => {
-  const { isPending, data } = useQuery({
+  const lodkaQuery = useQuery({
     queryKey: ["lodkaData"],
     queryFn: getLodkaItems,
+  });
+  const wioslaQuery = useQuery({
+    queryKey: ["wioslaData"],
+    queryFn: getWioslaItems,
+  });
+  const odziezQuery = useQuery({
+    queryKey: ["odziezData"],
+    queryFn: getOdziezItems,
   });
 
   return (
@@ -39,44 +49,202 @@ const StockPage = () => {
             <TabsTrigger value="odziez">Odzież</TabsTrigger>
           </TabsList>
           <TabsContent value="lodki">
-            <LodkiTab isPending={isPending} data={data ?? []} />
+            <LodkiTab isPending={lodkaQuery.isPending} data={lodkaQuery.data ?? []} />
           </TabsContent>
-          <TabsContent value="wiosla">Change your password here.</TabsContent>
-          <TabsContent value="odziez">Change your password here.</TabsContent>
+          <TabsContent value="wiosla">
+            <WioslaTab isPending={wioslaQuery.isPending} data={wioslaQuery.data ?? []} />
+          </TabsContent>
+          <TabsContent value="odziez">
+            <OdziezTab isPending={odziezQuery.isPending} data={odziezQuery.data ?? []} />
+          </TabsContent>
         </Tabs>
       </div>
     </Layout>
   );
 };
 
-const getLodkaCapacityCount = (cap: number, data: LodkaItem[]) => {
-  return data.find((d) => d.capacity === cap);
-};
-
-const LodkiTab = (props: TabProps<LodkaItem>) => {
+const OdziezTab = (props: TabProps<StockItemEntity>) => {
   if (props.isPending) {
     return (
-      <div className="flex gap-4">
-        <StockCardSkeleton />
-        <StockCardSkeleton />
-        <StockCardSkeleton />
+      <div className={`w-full flex flex-col`}>
+        <Skeleton className="w-[20rem] h-10 rounded-none mb-4" />
+        <div className="flex gap-4">
+          <StockCardSkeleton />
+          <StockCardSkeleton />
+          <StockCardSkeleton />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex gap-4">
+    <div className={`w-full flex flex-col h-[50rem] overflow-y-auto ${style}`}>
+      <div className="text-xl font-semibold pb-5">Odzież klubowa</div>
       {props.data.map((d) => (
         <StockCard
-          key={`stockCard-${d.name}`}
+          key={`stockCard-${d.name}-${d.id}`}
           title={d.name}
           description={d.description}
           image={{
-            src: "src/assets/l1os.png",
-            alt: "morska_1os",
+            src: d.img,
+            alt: d.imgAlt,
           }}
         />
       ))}
+    </div>
+  );
+};
+
+const WioslaTab = (props: TabProps<StockItemEntity>) => {
+  if (props.isPending) {
+    return (
+      <div className={`w-full flex flex-col`}>
+        <Skeleton className="w-[20rem] h-10 rounded-none mb-4" />
+        <div className="flex gap-4">
+          <StockCardSkeleton />
+          <StockCardSkeleton />
+          <StockCardSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`w-full flex flex-col h-[50rem] overflow-y-auto ${style}`}>
+      <div className="text-xl font-semibold pb-5">Wiosłsa klubowe</div>
+      {props.data.map((d) => (
+        <StockCard
+          key={`stockCard-${d.name}-${d.id}`}
+          title={d.name}
+          description={d.description}
+          image={{
+            src: d.img,
+            alt: d.imgAlt,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
+const LodkiTab = (props: TabProps<LodkaItem>) => {
+  if (props.isPending) {
+    return (
+      <div className={`w-full flex flex-col`}>
+        <Skeleton className="w-[20rem] h-10 rounded-none mb-4" />
+        <div className="flex gap-4">
+          <StockCardSkeleton />
+          <StockCardSkeleton />
+          <StockCardSkeleton />
+        </div>
+      </div>
+    );
+  }
+
+  const lodki1os = useMemo(() => props.data.filter((d) => d.capacity === 1), [props.data]);
+  const lodki2os = useMemo(() => props.data.filter((d) => d.capacity === 2), [props.data]);
+  const lodki4os = useMemo(() => props.data.filter((d) => d.capacity === 4), [props.data]);
+  const lodki8os = useMemo(() => props.data.filter((d) => d.capacity === 8), [props.data]);
+
+  const getLodki = (cap: 1 | 2 | 4 | 8) => {
+    switch (cap) {
+      case 1: {
+        return (
+          lodki1os.length > 0 && (
+            <div className="mb-4">
+              <div className="text-xl font-semibold pb-5">Łódki jednoosobowe</div>
+              <div className="flex gap-4">
+                {lodki1os.map((d) => (
+                  <StockCard
+                    key={`stockCard-${d.name}-${d.id}`}
+                    title={d.name}
+                    description={d.description}
+                    image={{
+                      src: d.img,
+                      alt: d.imgAlt,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        );
+      }
+      case 2: {
+        return (
+          lodki2os.length > 0 && (
+            <div>
+              <div className="text-xl font-semibold pb-5">Łódki dwuosobowe</div>
+              <div className="flex gap-4">
+                {lodki2os.map((d) => (
+                  <StockCard
+                    key={`stockCard-${d.name}-${d.id}`}
+                    title={d.name}
+                    description={d.description}
+                    image={{
+                      src: d.img,
+                      alt: d.imgAlt,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        );
+      }
+      case 4: {
+        return (
+          lodki4os.length > 0 && (
+            <div>
+              <div className="text-xl font-semibold pb-5">Łódki czteroosobowe</div>
+              <div className="flex gap-4">
+                {lodki4os.map((d) => (
+                  <StockCard
+                    key={`stockCard-${d.name}-${d.id}`}
+                    title={d.name}
+                    description={d.description}
+                    image={{
+                      src: d.img,
+                      alt: d.imgAlt,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        );
+      }
+      case 8: {
+        return (
+          lodki8os.length > 0 && (
+            <div>
+              <div className="text-xl font-semibold pb-5">Łódki ośmioosobowe</div>
+              <div className="flex gap-4">
+                {lodki8os.map((d) => (
+                  <StockCard
+                    key={`stockCard-${d.name}-${d.id}`}
+                    title={d.name}
+                    description={d.description}
+                    image={{
+                      src: d.img,
+                      alt: d.imgAlt,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        );
+      }
+    }
+  };
+
+  return (
+    <div className={`w-full flex flex-col h-[50rem] overflow-y-auto ${style}`}>
+      {getLodki(1)}
+      {getLodki(2)}
+      {getLodki(4)}
+      {getLodki(8)}
     </div>
   );
 };
