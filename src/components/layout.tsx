@@ -12,7 +12,7 @@ interface Route {
 
 const Layout = (props: React.PropsWithChildren) => {
   return (
-    <div className="flex w-full justify-center mt-48">
+    <div className="flex w-full justify-center m-4">
       <div className="flex min-w-[70rem] border rounded-md">
         <Navbar />
         <Separator orientation="vertical" />
@@ -32,7 +32,7 @@ const routes: Route[] = [
 const Navbar = () => {
   return (
     <TooltipProvider>
-      <div className="flex flex-col gap-5 min-w-10 items-center p-3 justify-between min-h-[50rem]">
+      <div className="flex flex-col gap-5 min-w-10 items-center p-3 justify-between min-h-[30rem]">
         <div className="flex flex-col gap-5">
           {routes.map((r) => (
             <Tooltip key={`navbar-tooltip-${r.title}`}>

@@ -1,11 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { LodkaItem, StockItemEntity, getLodkaItems, getOdziezItems, getWioslaItems } from "../../connection/stock";
+import style from "../../lib/scrollbar-style.module.css";
 import Layout from "../layout";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
-import { useMemo } from "react";
-import style from "../../lib/scrollbar-style.module.css";
 
 interface StockCardProps {
   title: string;
@@ -78,7 +78,7 @@ const OdziezTab = (props: TabProps<StockItemEntity>) => {
   }
 
   return (
-    <div className={`w-full flex flex-col h-[50rem] overflow-y-auto ${style}`}>
+    <div className={`w-full flex flex-col overflow-y-auto ${style}`}>
       <div className="text-xl font-semibold pb-5">Odzież klubowa</div>
       {props.data.map((d) => (
         <StockCard
@@ -110,7 +110,7 @@ const WioslaTab = (props: TabProps<StockItemEntity>) => {
   }
 
   return (
-    <div className={`w-full flex flex-col h-[50rem] overflow-y-auto ${style}`}>
+    <div className={`w-full flex flex-col overflow-y-auto ${style}`}>
       <div className="text-xl font-semibold pb-5">Wiosłsa klubowe</div>
       {props.data.map((d) => (
         <StockCard
@@ -151,9 +151,9 @@ const LodkiTab = (props: TabProps<LodkaItem>) => {
       case 1: {
         return (
           lodki1os.length > 0 && (
-            <div className="mb-4">
-              <div className="text-xl font-semibold pb-5">Łódki jednoosobowe</div>
-              <div className="flex gap-4">
+            <div className="mb-4 max-w-[60rem]">
+              <div className="text-xl flex font-semibold pb-5">Łódki jednoosobowe</div>
+              <div className="flex gap-4  overflow-x-auto">
                 {lodki1os.map((d) => (
                   <StockCard
                     key={`stockCard-${d.name}-${d.id}`}
@@ -173,9 +173,9 @@ const LodkiTab = (props: TabProps<LodkaItem>) => {
       case 2: {
         return (
           lodki2os.length > 0 && (
-            <div>
+            <div className="mb-4 max-w-[60rem]">
               <div className="text-xl font-semibold pb-5">Łódki dwuosobowe</div>
-              <div className="flex gap-4">
+              <div className="flex gap-4  overflow-x-auto">
                 {lodki2os.map((d) => (
                   <StockCard
                     key={`stockCard-${d.name}-${d.id}`}
@@ -195,9 +195,9 @@ const LodkiTab = (props: TabProps<LodkaItem>) => {
       case 4: {
         return (
           lodki4os.length > 0 && (
-            <div>
+            <div className="mb-4 max-w-[60rem]">
               <div className="text-xl font-semibold pb-5">Łódki czteroosobowe</div>
-              <div className="flex gap-4">
+              <div className="flex gap-4  overflow-x-auto">
                 {lodki4os.map((d) => (
                   <StockCard
                     key={`stockCard-${d.name}-${d.id}`}
@@ -217,9 +217,9 @@ const LodkiTab = (props: TabProps<LodkaItem>) => {
       case 8: {
         return (
           lodki8os.length > 0 && (
-            <div>
+            <div className="mb-4 max-w-[60rem]">
               <div className="text-xl font-semibold pb-5">Łódki ośmioosobowe</div>
-              <div className="flex gap-4">
+              <div className="flex gap-4  overflow-x-auto">
                 {lodki8os.map((d) => (
                   <StockCard
                     key={`stockCard-${d.name}-${d.id}`}
@@ -240,7 +240,7 @@ const LodkiTab = (props: TabProps<LodkaItem>) => {
   };
 
   return (
-    <div className={`w-full flex flex-col h-[50rem] overflow-y-auto ${style}`}>
+    <div className={`w-full flex flex-col overflow-y-auto ${style}`}>
       {getLodki(1)}
       {getLodki(2)}
       {getLodki(4)}
@@ -251,7 +251,7 @@ const LodkiTab = (props: TabProps<LodkaItem>) => {
 
 const StockCard = (props: StockCardProps) => {
   return (
-    <div className="w-72 flex flex-col border rounded-sm">
+    <div className="min-w-72 flex flex-col border rounded-sm mb-2">
       <div className="w-full h-72">
         <img src={props.image.src} alt={props.image.alt} className="rounded-t-sm w-full h-full object-cover" />
       </div>
