@@ -4,6 +4,9 @@ import ProfilePage from "./components/pages/profile-page";
 import StockPage from "./components/pages/stock-page";
 import ReservationPage from "./components/pages/reservation-page";
 import HistoryPage from "./components/pages/history-page";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -29,7 +32,11 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
 };
 
 export default App;

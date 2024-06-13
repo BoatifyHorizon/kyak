@@ -12,11 +12,11 @@ interface Route {
 
 const Layout = (props: React.PropsWithChildren) => {
   return (
-    <div className="h-screen">
-      <div className="flex min-w-[70rem] border rounded-md h-full">
+    <div className="flex w-full justify-center m-4">
+      <div className="flex min-w-[70rem] border rounded-md">
         <Navbar />
         <Separator orientation="vertical" />
-        <div className="p-3">{props.children}</div>
+        <div className="p-3 w-full">{props.children}</div>
       </div>
     </div>
   );
@@ -32,7 +32,7 @@ const routes: Route[] = [
 const Navbar = () => {
   return (
     <TooltipProvider>
-      <div className="flex flex-col gap-5 min-w-10 items-center p-3 justify-between min-h-[50rem]">
+      <div className="flex flex-col gap-5 min-w-10 items-center p-3 justify-between min-h-[30rem]">
         <div className="flex flex-col gap-5">
           {routes.map((r) => (
             <Tooltip key={`navbar-tooltip-${r.title}`}>
@@ -52,7 +52,7 @@ const Navbar = () => {
         <div className="flex flex-col gap-5">
           <Tooltip key={`navbar-tooltip-informacje`}>
             <TooltipTrigger asChild>
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
+              <div className="flex h-9 w-9 items-center cursor-pointer justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
                 <Info className="h-6 w-6" />
                 <span className="sr-only">Informacje</span>
               </div>
@@ -61,7 +61,7 @@ const Navbar = () => {
           </Tooltip>
           <Tooltip key={`navbar-tooltip-logout`}>
             <TooltipTrigger asChild>
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
+              <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
                 <LogOut className="h-6 w-6" />
                 <span className="sr-only">Wyloguj</span>
               </div>
