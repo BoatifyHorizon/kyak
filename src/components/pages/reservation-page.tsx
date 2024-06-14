@@ -40,7 +40,9 @@ const ReservationPage: React.FC = () => {
   return (
     <Layout>
       <div className="flex justify-between mb-4">
-        <SearchBox value={searchQuery} onChange={handleSearch} />
+        <div>
+          <SearchBox value={searchQuery} onChange={handleSearch} />
+        </div>
         <Button onClick={() => setIsModalOpen(true)}>Dodaj rezerwację</Button>
       </div>
       <DataTable columns={columns} data={data} />

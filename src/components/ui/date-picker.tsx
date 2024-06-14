@@ -1,6 +1,6 @@
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, FileDiff } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

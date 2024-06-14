@@ -1,11 +1,9 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
 import { Booking } from "@/bookings/columns";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DatePicker } from "@/components/ui/date-picker";
-import { Label } from "@radix-ui/react-label";
 
 interface AddBookingFormProps {
   onAddBooking: (newBooking: Booking) => void;
@@ -108,10 +105,10 @@ export const AddBookingForm: React.FC<AddBookingFormProps> = ({
           )}
         />
         <div className="flex justify-between">
-          <Button variant="outline" type="submit">
-            Potwierdź
+          <Button variant="outline" onClick={onClose}>
+            Zamknij
           </Button>
-          <Button onClick={onClose}>Zamknij</Button>
+          <Button type="submit">Potwierdź</Button>
         </div>
       </form>
     </Form>
