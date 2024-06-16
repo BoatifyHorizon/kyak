@@ -1,28 +1,55 @@
 import React, { useState } from "react";
 import Layout from "../layout";
+import { stockMockData } from "@/mocks/stock/stock-mock-data";
 import { bookingsMockData } from "@/mocks/booking/bookings-mock-data";
-import { Booking, columns } from "@/bookings/columns";
 import { DataTable } from "../ui/data-table";
 import { AddBookingDialog } from "@/bookings/add-booking-dialog";
+import { Booking } from "@/history/columns";
+import { Stock } from "@/stock/columns";
 
-function getData(): Booking[] {
+function getStockData(): Stock[] {
+  // TODO: retrieving data using API
+  return stockMockData;
+}
+
+function getBookingData(): Booking[] {
   // TODO: retrieving data using API
   return bookingsMockData;
 }
 
 const ReservationPage: React.FC = () => {
-  const [data, setData] = useState<Booking[]>(getData());
+  const [stockData] = useState<Stock[]>(getStockData());
+  const [bookingData, setBookingData] = useState<Booking[]>(getBookingData());
 
   const handleAddBooking = (newBooking: Booking) => {
-    const maxId = Math.max(...data.map((booking) => booking.id));
+    const maxId = Math.max(...bookingData.map((booking) => booking.id), 0);
     newBooking.id = maxId + 1;
-    setData((prevData) => [...prevData, newBooking]);
+    setBookingData((prevData) => [...prevData, newBooking]);
   };
+
+  const columns = [
+    {
+      id: "actions",
+      cell: ({ row }: { row: any }) => {
+        const selectedRow = row.original;
+        return (
+          <AddBookingDialog onAddBooking={handleAddBooking} row={selectedRow} />
+        );
+      },
+    },
+    {
+      accessorKey: "itemName",
+      header: "Nazwa sprzętu",
+    },
+    {
+      accessorKey: "quantity",
+      header: "Liczba dostępnych",
+    },
+  ];
 
   return (
     <Layout>
-      {/* <DataTable columns={columns} data={data} /> */}
-      <AddBookingDialog onAddBooking={handleAddBooking} />
+      <DataTable columns={columns} data={stockData} />
     </Layout>
   );
 };
