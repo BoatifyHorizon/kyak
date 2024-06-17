@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Stock } from "@/stock/columns";
+import { ListPlus } from "lucide-react";
 
 interface AddBookingFormProps {
   onAddBooking: (newBooking: Booking) => void;
@@ -74,7 +75,9 @@ export const AddBookingDialog: React.FC<AddBookingFormProps> = ({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button>Dodaj rezerwację</Button>
+        <Button>
+          <ListPlus className="h-4 w-4"/>
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

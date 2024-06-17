@@ -6,6 +6,7 @@ import { DataTable } from "../ui/data-table";
 import { AddBookingDialog } from "@/bookings/add-booking-dialog";
 import { Booking } from "@/history/columns";
 import { Stock } from "@/stock/columns";
+import { Separator } from "../ui/separator";
 
 function getStockData(): Stock[] {
   // TODO: retrieving data using API
@@ -49,6 +50,10 @@ const ReservationPage: React.FC = () => {
 
   return (
     <Layout>
+      <div className="text-xl font-medium tracking-wide px-3">
+        Rezerwacje
+      </div>
+      <Separator className="w-full my-3" />
       <DataTable columns={columns} data={stockData} />
     </Layout>
   );
