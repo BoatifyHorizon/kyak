@@ -20,7 +20,7 @@ export const getProfileData = (): Promise<ProfileData> => {
   });
 };
 
-export const changePassword = (password: string): Promise<boolean> => {
+export const changePassword = (_password: string): Promise<boolean> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(false);
