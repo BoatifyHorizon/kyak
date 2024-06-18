@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../layout";
-import { bookingsMockData } from "@/history/bookings-mock-data";
+import { bookingsMockData } from "@/mocks/booking/bookings-mock-data";
 import { Booking, columns } from "@/history/columns";
 import { DataTable } from "../ui/data-table";
 import { SearchBox } from "@/bookings/search-box";

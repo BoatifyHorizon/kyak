@@ -34,7 +34,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   
   const [sorting, setSorting] = React.useState<SortingState>([])
-  
+  const [rowSelection, setRowSelection] = React.useState({})
+
   const table = useReactTable({
     data,
     columns,
@@ -42,8 +43,10 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
+      rowSelection,
     },
   });
 
