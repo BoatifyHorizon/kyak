@@ -6,6 +6,8 @@ import style from "../../lib/scrollbar-style.module.css";
 import Layout from "../layout";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../providers/auth-provider";
 
 interface StockCardProps {
   title: string;
@@ -24,6 +26,9 @@ export interface ImageProps {
 }
 
 const StockPage = () => {
+  const auth = useAuth();
+  if (auth.token === "") return <Navigate to="/login" />;
+
   const lodkaQuery = useQuery({
     queryKey: ["lodkaData"],
     queryFn: getLodkaItems,

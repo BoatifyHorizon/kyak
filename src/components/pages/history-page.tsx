@@ -6,6 +6,8 @@ import { DataTable } from "../ui/data-table";
 import { SearchBox } from "@/bookings/search-box";
 import moment from "moment";
 import { Separator } from "../ui/separator";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../providers/auth-provider";
 
 function getData(): Booking[] {
   // TODO: retrieving data using API
@@ -18,6 +20,9 @@ function getData(): Booking[] {
 }
 
 const HistoryPage: React.FC = () => {
+  const auth = useAuth();
+  if (auth.token === "") return <Navigate to="/login" />;
+
   const [data, setData] = useState<Booking[]>(getData());
   const [searchQuery, setSearchQuery] = useState<string>("");
 

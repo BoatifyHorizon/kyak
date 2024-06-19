@@ -8,14 +8,14 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ProfileData, changePassword, getProfileData } from "@/connection/profile";
-import useAuth from "@/hooks/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { z } from "zod";
 import Layout from "../layout";
+import { useAuth } from "../providers/auth-provider";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
@@ -24,11 +24,7 @@ import { useToast } from "../ui/use-toast";
 
 const ProfilePage = () => {
   const auth = useAuth();
-  const navigate = useNavigate();
-
-  if (!auth.loading && !auth.isAuthenticated) {
-    navigate("/login");
-  }
+  if (auth.token === "") return <Navigate to="/login" />;
 
   const { isPending, data } = useQuery({
     queryKey: ["profileData"],
@@ -83,41 +79,6 @@ const ProfilePage = () => {
 
   if (isPending) {
     return (
-      auth.isAuthenticated && (
-        <Layout>
-          <div className="text-xl font-medium tracking-wide px-3">Profil</div>
-          <Separator className="w-full my-3" />
-          <div className="px-3 flex flex-col gap-4 w-full justify-center items-center">
-            <div className="flex items-center justify-center ">
-              <div className="flex flex-col items-center">
-                <UserRound className="h-24 w-24 text-primary" />
-                <Skeleton className="w-[12rem] h-6 rounded-md" />
-              </div>
-            </div>
-            <Skeleton className="w-[15rem] h-4 rounded-md" />
-            <Skeleton className="w-[10rem] h-4 rounded-md" />
-            <div className="flex justify-between p-3 border rounded-md">
-              <div className="flex flex-col items-center px-6">
-                <Skeleton className="w-[3rem] h-6 rounded-md" />
-                <div className="text-sm font-normal w-24 text-center">Trwające rezerwacje</div>
-              </div>
-              <div className="flex flex-col items-center px-6">
-                <Skeleton className="w-[3rem] h-6 rounded-md" />
-                <div className="text-sm font-normal w-24 text-center">Wszystkie rezerwacje</div>
-              </div>
-            </div>
-
-            <Button disabled className="w-32">
-              Zmień hasło
-            </Button>
-          </div>
-        </Layout>
-      )
-    );
-  }
-
-  return (
-    auth.isAuthenticated && (
       <Layout>
         <div className="text-xl font-medium tracking-wide px-3">Profil</div>
         <Separator className="w-full my-3" />
@@ -125,72 +86,101 @@ const ProfilePage = () => {
           <div className="flex items-center justify-center ">
             <div className="flex flex-col items-center">
               <UserRound className="h-24 w-24 text-primary" />
-              <div className="text-3xl font-medium">{profile.fullname}</div>
+              <Skeleton className="w-[12rem] h-6 rounded-md" />
             </div>
           </div>
-          <div>{profile.email}</div>
-          <div>{profile.phone}</div>
+          <Skeleton className="w-[15rem] h-4 rounded-md" />
+          <Skeleton className="w-[10rem] h-4 rounded-md" />
           <div className="flex justify-between p-3 border rounded-md">
             <div className="flex flex-col items-center px-6">
-              <div className="font-bold text-xl">{profile.currentBooking}</div>
+              <Skeleton className="w-[3rem] h-6 rounded-md" />
               <div className="text-sm font-normal w-24 text-center">Trwające rezerwacje</div>
             </div>
             <div className="flex flex-col items-center px-6">
-              <div className="font-bold text-xl">{profile.allBookings}</div>
+              <Skeleton className="w-[3rem] h-6 rounded-md" />
               <div className="text-sm font-normal w-24 text-center">Wszystkie rezerwacje</div>
             </div>
           </div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="w-32">Zmień hasło</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Zmień hasło</DialogTitle>
-                <DialogDescription>
-                  Ta akcja nie może zostać cofnięta. Twoje hasło zostanie zmienione.
-                </DialogDescription>
-              </DialogHeader>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  <FormField
-                    control={form.control}
-                    name="newPwd"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nowe hasło</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Nowe hasło" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="newPwdRepeat"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Powtórz nowe hasło</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Powtórz nowe hasło" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <div className="w-full flex justify-end">
-                    <Button className="w-32" type="submit">
-                      Zapisz
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+
+          <Button disabled className="w-32">
+            Zmień hasło
+          </Button>
         </div>
       </Layout>
-    )
+    );
+  }
+
+  return (
+    <Layout>
+      <div className="text-xl font-medium tracking-wide px-3">Profil</div>
+      <Separator className="w-full my-3" />
+      <div className="px-3 flex flex-col gap-4 w-full justify-center items-center">
+        <div className="flex items-center justify-center ">
+          <div className="flex flex-col items-center">
+            <UserRound className="h-24 w-24 text-primary" />
+            <div className="text-3xl font-medium">{profile.fullname}</div>
+          </div>
+        </div>
+        <div>{profile.email}</div>
+        <div>{profile.phone}</div>
+        <div className="flex justify-between p-3 border rounded-md">
+          <div className="flex flex-col items-center px-6">
+            <div className="font-bold text-xl">{profile.currentBooking}</div>
+            <div className="text-sm font-normal w-24 text-center">Trwające rezerwacje</div>
+          </div>
+          <div className="flex flex-col items-center px-6">
+            <div className="font-bold text-xl">{profile.allBookings}</div>
+            <div className="text-sm font-normal w-24 text-center">Wszystkie rezerwacje</div>
+          </div>
+        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="w-32">Zmień hasło</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Zmień hasło</DialogTitle>
+              <DialogDescription>Ta akcja nie może zostać cofnięta. Twoje hasło zostanie zmienione.</DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <FormField
+                  control={form.control}
+                  name="newPwd"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nowe hasło</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Nowe hasło" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="newPwdRepeat"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Powtórz nowe hasło</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Powtórz nowe hasło" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="w-full flex justify-end">
+                  <Button className="w-32" type="submit">
+                    Zapisz
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </Layout>
   );
 };
 

@@ -5,7 +5,7 @@ export interface Profile {
 }
 
 export interface AuthEntity {
-  isAuthenticated: boolean;
+  jwt: string;
   profile: Profile;
 }
 
@@ -13,7 +13,7 @@ export const getAuthData = (): Promise<AuthEntity> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
-        isAuthenticated: true,
+        jwt: "asd",
         profile: {
           fullname: "Kacper Płusa",
           email: "kacprpl@gmail.com ",

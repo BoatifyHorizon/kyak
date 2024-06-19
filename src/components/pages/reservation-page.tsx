@@ -7,6 +7,8 @@ import { AddBookingDialog } from "@/bookings/add-booking-dialog";
 import { Booking } from "@/history/columns";
 import { Stock } from "@/stock/columns";
 import { Separator } from "../ui/separator";
+import { useAuth } from "../providers/auth-provider";
+import { Navigate } from "react-router-dom";
 
 function getStockData(): Stock[] {
   // TODO: retrieving data using API
@@ -19,6 +21,9 @@ function getBookingData(): Booking[] {
 }
 
 const ReservationPage: React.FC = () => {
+  const auth = useAuth();
+  if (auth.token === "") return <Navigate to="/login" />;
+
   const [stockData] = useState<Stock[]>(getStockData());
   const [bookingData, setBookingData] = useState<Booking[]>(getBookingData());
 
