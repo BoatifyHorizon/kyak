@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Navigate } from "react-router-dom";
 import { z } from "zod";
 
 const LoginForm = () => {
@@ -26,6 +30,12 @@ const LoginForm = () => {
 };
 
 const LoginInputForm = () => {
+  const mutation = useMutation({
+    mutationFn: (loginData: z.infer<typeof loginSchema>) => {
+      return axios.post("/login", loginData);
+    },
+  });
+
   const loginSchema = z.object({
     username: z.string().min(1, { message: "To pole nie moze być puste." }),
     password: z.string().min(1, { message: "To pole nie moze być puste." }),
@@ -40,7 +50,11 @@ const LoginInputForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+    mutation.mutate(values);
+  }
+
+  if (mutation.isSuccess) {
+    <Navigate to="/" />;
   }
 
   return (
@@ -66,19 +80,36 @@ const LoginInputForm = () => {
             <FormItem>
               <FormLabel>Hasło</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input type="password" placeholder="password" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Zatwierdź</Button>
+        {mutation.isError && (
+          <FormDescription className="text-destructive">Hasło lub email są nieprawidłowe</FormDescription>
+        )}
+        {mutation.isPending ? (
+          <Button className="w-1/2" type="submit">
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+          </Button>
+        ) : (
+          <Button className="w-1/2" type="submit">
+            Zatwierdź
+          </Button>
+        )}
       </form>
     </Form>
   );
 };
 
 const RegisterInputForm = () => {
+  const mutation = useMutation({
+    mutationFn: (registerData: z.infer<typeof registerSchema>) => {
+      return axios.post("/register", registerData);
+    },
+  });
+
   const registerSchema = z
     .object({
       name: z.string().min(1, { message: "To pole nie moze być puste." }),
@@ -111,7 +142,11 @@ const RegisterInputForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof registerSchema>) {
-    console.log(values);
+    mutation.mutate(values);
+  }
+
+  if (mutation.isSuccess) {
+    <Navigate to="/" />;
   }
 
   return (
@@ -195,7 +230,20 @@ const RegisterInputForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit">Zatwierdź</Button>
+        {mutation.isError && (
+          <FormDescription className="text-destructive">
+            Nie udało się stworzyć konta. Spórbuj ponownie.
+          </FormDescription>
+        )}
+        {mutation.isPending ? (
+          <Button className="w-1/2" type="submit">
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+          </Button>
+        ) : (
+          <Button className="w-1/2" type="submit">
+            Zatwierdź
+          </Button>
+        )}
       </form>
     </Form>
   );
