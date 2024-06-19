@@ -12,8 +12,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
 import { UserRound } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Navigate } from "react-router-dom";
 import { z } from "zod";
 import Layout from "../layout";
+import { useAuth } from "../providers/auth-provider";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
@@ -21,6 +23,9 @@ import { Skeleton } from "../ui/skeleton";
 import { useToast } from "../ui/use-toast";
 
 const ProfilePage = () => {
+  const auth = useAuth();
+  if (auth.token === "") return <Navigate to="/login" />;
+
   const { isPending, data } = useQuery({
     queryKey: ["profileData"],
     queryFn: getProfileData,
