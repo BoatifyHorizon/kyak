@@ -1,3 +1,6 @@
+import axios, { AxiosResponse } from "axios";
+import { BACKEND_ADDRESS, USERS_JWT, USERS_PASSWORD } from "./api-config";
+
 export interface ProfileData {
   fullname: string;
   email: string;
@@ -6,24 +9,30 @@ export interface ProfileData {
   allBookings: number;
 }
 
-export const getProfileData = (): Promise<ProfileData> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        fullname: "Kacper Płusa",
-        email: "kacprpl@gmail.com ",
-        phone: "+48 473 384 123",
-        currentBooking: 1,
-        allBookings: 23,
-      });
-    }, 1000);
-  });
+export const getProfileData = async (): Promise<ProfileData | false> => {
+  const jwt = localStorage.getItem("jwt");
+  try {
+    const profile: AxiosResponse<ProfileData> = await axios.post(BACKEND_ADDRESS + USERS_JWT, jwt);
+
+    return profile.data;
+  } catch (error) {
+    return false;
+  }
 };
 
-export const changePassword = (_password: string): Promise<boolean> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(false);
-    }, 1000);
-  });
+export const changePassword = async (password: string): Promise<boolean> => {
+  const jwt = localStorage.getItem("jwt");
+  try {
+    const profile: AxiosResponse<ProfileData> = await axios.post(BACKEND_ADDRESS + USERS_JWT, jwt);
+
+    const changed: AxiosResponse<string> = await axios.put(
+      BACKEND_ADDRESS + USERS_PASSWORD + "/" + profile.data.email + "/" + password
+    );
+
+    if (changed.data === "Password Changed successfully") return true;
+
+    return false;
+  } catch (error) {
+    return false;
+  }
 };

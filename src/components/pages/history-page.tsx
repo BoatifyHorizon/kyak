@@ -1,56 +1,61 @@
-import React, { useState } from "react";
-import Layout from "../layout";
-import { bookingsMockData } from "@/mocks/booking/bookings-mock-data";
-import { Booking, columns } from "@/history/columns";
-import { DataTable } from "../ui/data-table";
 import { SearchBox } from "@/bookings/search-box";
-import moment from "moment";
-import { Separator } from "../ui/separator";
+import { BACKEND_ADDRESS, BOOKING_HISTORY, USERS_JWT } from "@/connection/api-config";
+import { ProfileData } from "@/connection/profile";
+import { Booking, columns } from "@/history/columns";
+import { useQuery } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
+import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
+import Layout from "../layout";
 import { useAuth } from "../providers/auth-provider";
+import { DataTable } from "../ui/data-table";
+import { Separator } from "../ui/separator";
 
-function getData(): Booking[] {
-  // TODO: retrieving data using API
+async function getHistoryData(): Promise<Booking[] | false> {
+  const jwt = localStorage.getItem("jwt");
+  try {
+    const profile: AxiosResponse<ProfileData> = await axios.post(BACKEND_ADDRESS + USERS_JWT, jwt);
 
-  return bookingsMockData.map((booking) => ({
-    ...booking,
-    startDate: moment(booking.startDate).format("DD.MM.YYYY HH:mm"),
-    endDate: moment(booking.endDate).format("DD.MM.YYYY HH:mm"),
-  }));
+    if (profile.status >= 400) {
+      return false;
+    }
+
+    const lodki = await axios.get(BACKEND_ADDRESS + BOOKING_HISTORY + "/" + profile.data.email);
+
+    return lodki.data;
+  } catch (error) {
+    return false;
+  }
 }
 
 const HistoryPage: React.FC = () => {
   const auth = useAuth();
   if (auth.token === "") return <Navigate to="/login" />;
 
-  const [data, setData] = useState<Booking[]>(getData());
+  const historyQuery = useQuery({
+    queryKey: ["historyData"],
+    queryFn: getHistoryData,
+  });
+  if (historyQuery.data === false) return <Navigate to="/login" />;
+
+  const [data, setData] = useState<Booking[]>(historyQuery.data ?? []);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query) {
-      const filteredData = getData().filter((booking) =>
-        booking.itemName.toLowerCase().includes(query.toLowerCase())
-      );
+      const filteredData = data.filter((booking) => booking.itemName.toLowerCase().includes(query.toLowerCase()));
       setData(filteredData);
-    } else {
-      setData(getData());
     }
   };
 
   return (
     <Layout>
-      <div className="text-xl font-medium tracking-wide px-3">
-        Historia rezerwacji
-      </div>
+      <div className="text-xl font-medium tracking-wide px-3">Historia rezerwacji</div>
       <Separator className="w-full my-3" />
       <div className="flex justify-between mb-4">
         <div>
-          <SearchBox
-            value={searchQuery}
-            onChange={handleSearch}
-            placeholder="Wyszukaj po nazwie..."
-          />
+          <SearchBox value={searchQuery} onChange={handleSearch} placeholder="Wyszukaj po nazwie..." />
         </div>
       </div>
       <DataTable columns={columns} data={data} />

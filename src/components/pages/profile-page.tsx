@@ -32,6 +32,10 @@ const ProfilePage = () => {
   });
   const { toast } = useToast();
 
+  if(data === false) {
+    return <Navigate to="/login" />;
+  }
+
   const profile: ProfileData = data
     ? data
     : {
