@@ -1,8 +1,6 @@
 import { AddBookingDialog } from "@/bookings/add-booking-dialog";
-import { BACKEND_ADDRESS, EQUIPMENT_ALL, USERS_JWT } from "@/connection/api-config";
+import { BACKEND_ADDRESS, BOOKING_ADD, EQUIPMENT_ALL, USERS_JWT } from "@/connection/api-config";
 import { ProfileData } from "@/connection/profile";
-import { Booking } from "@/history/columns";
-import { bookingsMockData } from "@/mocks/booking/bookings-mock-data";
 import { Stock } from "@/stock/columns";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
@@ -20,6 +18,13 @@ interface Equipment {
   img: string;
   imgAlt: string;
   capacity: number;
+}
+
+export interface BookingReq {
+  startTime: string;
+  endTime: string;
+  email?: string;
+  equipmentID: number;
 }
 
 async function getStockData(): Promise<Stock[] | false> {
@@ -44,9 +49,22 @@ async function getStockData(): Promise<Stock[] | false> {
   }
 }
 
-function getBookingData(): Booking[] {
-  // TODO: retrieving data using API
-  return bookingsMockData;
+async function addBooking(booking: BookingReq) {
+  const jwt = localStorage.getItem("jwt");
+  try {
+    const profile: AxiosResponse<ProfileData> = await axios.post(BACKEND_ADDRESS + USERS_JWT, jwt);
+
+    if (profile.status >= 400) {
+      return false;
+    }
+
+    const bookingToAdd: BookingReq = { ...booking, email: profile.data.email };
+    const response: AxiosResponse<boolean> = await axios.post(BACKEND_ADDRESS + BOOKING_ADD, bookingToAdd);
+
+    return response.data;
+  } catch (error) {
+    return false;
+  }
 }
 
 const ReservationPage: React.FC = () => {
@@ -60,12 +78,9 @@ const ReservationPage: React.FC = () => {
   if (stockQuery.data === false) return <Navigate to="/login" />;
 
   const [stockData] = useState<Stock[]>(stockQuery.data ?? []);
-  const [bookingData, setBookingData] = useState<Booking[]>(getBookingData());
 
-  const handleAddBooking = (newBooking: Booking) => {
-    const maxId = Math.max(...bookingData.map((booking) => booking.id), 0);
-    newBooking.id = maxId + 1;
-    setBookingData((prevData) => [...prevData, newBooking]);
+  const handleAddBooking = (newBooking: BookingReq) => {
+    addBooking(newBooking);
   };
 
   const columns = [

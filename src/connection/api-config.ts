@@ -16,5 +16,5 @@ export const BOOKING_ADD = "/booking/dodaj-rezerwacje";
 export const EQUIPMENT = '/equipment'
 export const EQUIPMENT_ALL = '/equipment/all'
 export const EQUIPMENT_LODKA = '/equipment/boats'
-export const EQUIPMENT_OARS = '/equipment/boats'
-export const EQUIPMENT_CLOTHES = '/equipment/boats'
+export const EQUIPMENT_OARS = '/equipment/oars'
+export const EQUIPMENT_CLOTHES = '/equipment/clothes'

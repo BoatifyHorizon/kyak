@@ -1,32 +1,18 @@
-import { Booking } from "@/history/columns";
-import { useForm } from "react-hook-form";
+import { BookingReq } from "@/components/pages/reservation-page";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 import { Stock } from "@/stock/columns";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ListPlus } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface AddBookingFormProps {
-  onAddBooking: (newBooking: Booking) => void;
+  onAddBooking: (newBooking: BookingReq) => void;
   row: Stock;
 }
 
@@ -44,10 +30,7 @@ const formSchema = z
     path: ["endDate"],
   });
 
-export const AddBookingDialog: React.FC<AddBookingFormProps> = ({
-  onAddBooking,
-  row,
-}) => {
+export const AddBookingDialog: React.FC<AddBookingFormProps> = ({ onAddBooking, row }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -59,14 +42,11 @@ export const AddBookingDialog: React.FC<AddBookingFormProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   function onSubmit() {
-    const newBooking: Booking = {
+    const newBooking: BookingReq = {
       ...form,
-      id: 0,
-      itemName: row.itemName,
-      quantity: 1,
-      bookingDate: new Date().toISOString(),
-      startDate: new Date(form.getValues("startDate")).toISOString(),
-      endDate: new Date(form.getValues("endDate")).toISOString(),
+      startTime: new Date(form.getValues("startDate")).toISOString(),
+      endTime: new Date(form.getValues("endDate")).toISOString(),
+      equipmentID: row.id,
     };
     onAddBooking(newBooking);
     setIsDialogOpen(false);
@@ -76,7 +56,7 @@ export const AddBookingDialog: React.FC<AddBookingFormProps> = ({
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <Button>
-          <ListPlus className="h-4 w-4"/>
+          <ListPlus className="h-4 w-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -106,10 +86,7 @@ export const AddBookingDialog: React.FC<AddBookingFormProps> = ({
                 <FormItem className="flex flex-col">
                   <FormLabel>Data początkowa</FormLabel>
                   <FormControl>
-                    <DateTimePicker
-                      text="Wybierz datę początkową"
-                      field={field}
-                    />
+                    <DateTimePicker text="Wybierz datę początkową" field={field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
