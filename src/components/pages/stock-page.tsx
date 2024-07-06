@@ -42,6 +42,10 @@ const StockPage = () => {
     queryFn: getOdziezItems,
   });
 
+  if(lodkaQuery.data === false) return <Navigate to="/login" />;
+  if(wioslaQuery.data === false) return <Navigate to="/login" />;
+  if(odziezQuery.data === false) return <Navigate to="/login" />;
+
   return (
     <Layout>
       <div className="text-xl font-medium tracking-wide px-3">Asortyment</div>

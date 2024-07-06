@@ -3,6 +3,7 @@ import { User, Component, CalendarFold, CalendarSearch, Info, LogOut } from "luc
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { Link } from "react-router-dom";
 import { Separator } from "./ui/separator";
+import { useAuth } from "./providers/auth-provider";
 
 interface Route {
   title: string;
@@ -30,6 +31,8 @@ const routes: Route[] = [
 ];
 
 const Navbar = () => {
+  const auth = useAuth();
+
   return (
     <TooltipProvider>
       <div className="flex flex-col gap-5 min-w-10 items-center p-3 justify-between min-h-[30rem]">
@@ -62,7 +65,7 @@ const Navbar = () => {
           <Tooltip key={`navbar-tooltip-logout`}>
             <TooltipTrigger asChild>
               <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8">
-                <LogOut className="h-6 w-6" />
+                <LogOut onClick={auth.logOut} className="h-6 w-6" />
                 <span className="sr-only">Wyloguj</span>
               </div>
             </TooltipTrigger>

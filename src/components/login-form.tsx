@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Navigate } from "react-router-dom";
 import { z } from "zod";
+import { useAuth } from "./providers/auth-provider";
+import { useState } from "react";
 
 const LoginForm = () => {
   return (
@@ -30,9 +31,12 @@ const LoginForm = () => {
 };
 
 const LoginInputForm = () => {
+  const auth = useAuth();
+  const [error, setError] = useState<string>("");
+
   const mutation = useMutation({
-    mutationFn: (loginData: z.infer<typeof loginSchema>) => {
-      return axios.post("/login", loginData);
+    mutationFn: async (loginData: z.infer<typeof loginSchema>) => {
+      auth.loginAction({ username: loginData.username, password: loginData.password });
     },
   });
 
@@ -56,6 +60,12 @@ const LoginInputForm = () => {
   if (mutation.isSuccess) {
     <Navigate to="/" />;
   }
+
+  if(mutation.isError) {
+    setError("Hasło lub email są nieprawidłowe.")
+  }
+
+  console.log(mutation)
 
   return (
     <Form {...form}>
@@ -99,14 +109,23 @@ const LoginInputForm = () => {
           </Button>
         )}
       </form>
+      {error.length > 0 ? <p className="text-destructive">{error}</p> : ""}
     </Form>
   );
 };
 
 const RegisterInputForm = () => {
+  const auth = useAuth();
+
   const mutation = useMutation({
-    mutationFn: (registerData: z.infer<typeof registerSchema>) => {
-      return axios.post("/register", registerData);
+    mutationFn: async (registerData: z.infer<typeof registerSchema>) => {
+      auth.register({
+        email: registerData.username,
+        name: registerData.name,
+        surname: registerData.surname,
+        phone: registerData.phone,
+        password: registerData.password,
+      });
     },
   });
 
