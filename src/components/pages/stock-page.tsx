@@ -262,7 +262,7 @@ const StockCard = (props: StockCardProps) => {
   return (
     <div className="min-w-72 flex flex-col border rounded-sm mb-2">
       <div className="w-full h-72">
-        <img src={props.image.src} alt={props.image.alt} className="rounded-t-sm w-full h-full object-cover" />
+        <img src={`src/assets/${props.image.src}`} alt={props.image.alt} className="rounded-t-sm w-full h-full object-cover" />
       </div>
       <div className="p-4 flex flex-col">
         <div className="text-lg font-semibold">{props.title}</div>

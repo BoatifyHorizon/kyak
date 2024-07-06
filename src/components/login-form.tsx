@@ -65,8 +65,6 @@ const LoginInputForm = () => {
     setError("Hasło lub email są nieprawidłowe.")
   }
 
-  console.log(mutation)
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

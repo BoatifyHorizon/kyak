@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { BACKEND_ADDRESS, EQUIPMENT_LODKA, USERS_JWT } from "./api-config";
+import { BACKEND_ADDRESS, EQUIPMENT_CLOTHES, EQUIPMENT_LODKA, EQUIPMENT_OARS, USERS_JWT } from "./api-config";
 import { ProfileData } from "./profile";
 
 export interface StockItemEntity {
@@ -40,7 +40,7 @@ export const getWioslaItems = async (): Promise<StockItemEntity[] | false> => {
       return false;
     }
 
-    const lodki = await axios.get(BACKEND_ADDRESS + EQUIPMENT_LODKA);
+    const lodki = await axios.get(BACKEND_ADDRESS + EQUIPMENT_OARS);
 
     return lodki.data;
   } catch (error) {
@@ -57,7 +57,7 @@ export const getOdziezItems = async (): Promise<StockItemEntity[] | false> => {
       return false;
     }
 
-    const lodki = await axios.get(BACKEND_ADDRESS + EQUIPMENT_LODKA);
+    const lodki = await axios.get(BACKEND_ADDRESS + EQUIPMENT_CLOTHES);
 
     return lodki.data;
   } catch (error) {
