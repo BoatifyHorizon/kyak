@@ -1,7 +1,7 @@
 import { SearchBox } from "@/bookings/search-box";
 import { BACKEND_ADDRESS, BOOKING_HISTORY, USERS_JWT } from "@/connection/api-config";
 import { ProfileData } from "@/connection/profile";
-import { Booking, columns } from "@/history/columns";
+import { BookingRespQuan, columns } from "@/history/columns";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
@@ -11,7 +11,13 @@ import { useAuth } from "../providers/auth-provider";
 import { DataTable } from "../ui/data-table";
 import { Separator } from "../ui/separator";
 
-async function getHistoryData(): Promise<Booking[] | false> {
+export interface BookingResponse {
+  equipmentName: string;
+  startDate: string;
+  endDate: string;
+}
+
+async function getHistoryData(): Promise<BookingRespQuan[] | false> {
   const jwt = localStorage.getItem("jwt");
   try {
     const profile: AxiosResponse<ProfileData> = await axios.post(BACKEND_ADDRESS + USERS_JWT, jwt);
@@ -20,9 +26,12 @@ async function getHistoryData(): Promise<Booking[] | false> {
       return false;
     }
 
-    const lodki = await axios.get(BACKEND_ADDRESS + BOOKING_HISTORY + "/" + profile.data.email);
+    const equipment: AxiosResponse<BookingResponse[]> = await axios.get(
+      BACKEND_ADDRESS + BOOKING_HISTORY + "/" + profile.data.email
+    );
+    const eqToAdd: BookingRespQuan[] = equipment.data.map((e) => ({ ...e, quantity: 1 }));
 
-    return lodki.data;
+    return eqToAdd;
   } catch (error) {
     return false;
   }
@@ -38,13 +47,13 @@ const HistoryPage: React.FC = () => {
   });
   if (historyQuery.data === false) return <Navigate to="/login" />;
 
-  const [data, setData] = useState<Booking[]>(historyQuery.data ?? []);
+  const [data, setData] = useState<BookingRespQuan[]>(historyQuery.data ?? []);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query) {
-      const filteredData = data.filter((booking) => booking.itemName.toLowerCase().includes(query.toLowerCase()));
+      const filteredData = data.filter((booking) => booking.equipmentName.toLowerCase().includes(query.toLowerCase()));
       setData(filteredData);
     }
   };
