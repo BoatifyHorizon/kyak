@@ -10,6 +10,7 @@ import Layout from "../layout";
 import { useAuth } from "../providers/auth-provider";
 import { DataTable } from "../ui/data-table";
 import { Separator } from "../ui/separator";
+import { useToast } from "../ui/use-toast";
 
 interface Equipment {
   id: number;
@@ -71,6 +72,8 @@ const ReservationPage: React.FC = () => {
   const auth = useAuth();
   if (auth.token === "") return <Navigate to="/login" />;
 
+  const { toast } = useToast();
+
   const stockQuery = useQuery({
     queryKey: ["stockData"],
     queryFn: getStockData,
@@ -79,8 +82,25 @@ const ReservationPage: React.FC = () => {
 
   const [stockData] = useState<Stock[]>(stockQuery.data ?? []);
 
-  const handleAddBooking = (newBooking: BookingReq) => {
-    addBooking(newBooking);
+  const handleAddBooking = async (newBooking: BookingReq) => {
+    toast({
+      title: "Trwa dodawanie rezerwacji...",
+      description: "To może chwilę potrwać.",
+    });
+
+    const resp = await addBooking(newBooking);
+    if (resp) {
+      toast({
+        title: "Sukces! Rezerwacja została dodana.",
+        description: "Możesz zobaczyć swoje rezerwacje w oknie historii.",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Rezerwacja nie powiodła się.",
+        description: "Jeśli chcesz zarezerwować spróbuj ponownie.",
+      });
+    }
   };
 
   const columns = [

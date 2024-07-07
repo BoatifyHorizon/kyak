@@ -1,10 +1,9 @@
-import { SearchBox } from "@/bookings/search-box";
 import { BACKEND_ADDRESS, BOOKING_HISTORY, USERS_JWT } from "@/connection/api-config";
 import { ProfileData } from "@/connection/profile";
 import { BookingRespQuan, columns } from "@/history/columns";
 import { useQuery } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
 import Layout from "../layout";
 import { useAuth } from "../providers/auth-provider";
@@ -47,27 +46,11 @@ const HistoryPage: React.FC = () => {
   });
   if (historyQuery.data === false) return <Navigate to="/login" />;
 
-  const [data, setData] = useState<BookingRespQuan[]>(historyQuery.data ?? []);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    if (query) {
-      const filteredData = data.filter((booking) => booking.equipmentName.toLowerCase().includes(query.toLowerCase()));
-      setData(filteredData);
-    }
-  };
-
   return (
     <Layout>
       <div className="text-xl font-medium tracking-wide px-3">Historia rezerwacji</div>
       <Separator className="w-full my-3" />
-      <div className="flex justify-between mb-4">
-        <div>
-          <SearchBox value={searchQuery} onChange={handleSearch} placeholder="Wyszukaj po nazwie..." />
-        </div>
-      </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={historyQuery.data ?? []} />
     </Layout>
   );
 };
